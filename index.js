@@ -52,16 +52,15 @@ const context = canvas.getContext('2d')
 
 const drawCircleOnCtx = drawCircle(context)
 
-function callback() {
-  let clear = [() => {}, () => {}]
+function render() {
+  let clears = []
   return (data, cache) => {
     const positions = data[0]
 
-    positions.forEach((_, i) => clear[i] ? clear[i]() : '')
-
-    const clears = positions.map(pos => drawCircleOnCtx(pos))
-
-    clear = clears
+    clears = positions.map((pos, i) => {
+      if(clears[i]) clears[i]()
+      return drawCircleOnCtx(pos)
+    })
     // draw path --- probably beginPath(), stroke() every tick is a better solution
     // const sliced = cache.slice(-5)[0]
     // if(sliced !== undefined) {
@@ -75,7 +74,7 @@ function callback() {
   }
 }
 
-let simulation = batch(memory, [[initPosition, initVelocity]])(simulateNSteps, 20, callback())
+let simulation = batch(memory, [[initPosition, initVelocity]])(simulateNSteps, 20, render())
 
 simulateButton.addEventListener('click', () => {
   simulation = simulation.start ?
