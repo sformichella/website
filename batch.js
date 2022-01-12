@@ -15,7 +15,7 @@ export function batch(size, init) {
             index = 0
           }
 
-          callback(cache[index])
+          callback(cache[index], cache.slice(0, index))
 
           index += 1
         }, time)
